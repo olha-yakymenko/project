@@ -1,7 +1,7 @@
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import path, reverse_lazy
 from .models import Expense, Category
-from .views import ExpenseListView, CategoryListView
+from .views import ExpenseListView, CategoryListView, CategoryUpdateView
 
 
 urlpatterns = [
@@ -13,7 +13,7 @@ urlpatterns = [
             model=Expense,
             fields='__all__',
             success_url=reverse_lazy('expenses:expense-list'),
-            template_name='generic_update.html'
+            template_name='expenses/generic_update.html'  
          ),
          name='expense-create'),
     path('expense/<int:pk>/edit/',
@@ -21,14 +21,14 @@ urlpatterns = [
             model=Expense,
             fields='__all__',
             success_url=reverse_lazy('expenses:expense-list'),
-            template_name='generic_update.html'
+            template_name='expenses/generic_update.html'  
          ),
          name='expense-edit'),
     path('expense/<int:pk>/delete/',
          DeleteView.as_view(
             model=Expense,
             success_url=reverse_lazy('expenses:expense-list'),
-            template_name='generic_delete.html'
+            template_name='expenses/generic_delete.html'  
          ),
          name='expense-delete'),
 
@@ -40,14 +40,17 @@ urlpatterns = [
             model=Category,
             fields='__all__',
             success_url=reverse_lazy('expenses:category-list'),
-            template_name='generic_update.html'
+            template_name='expenses/generic_update.html'  
          ),
          name='category-create'),
+    path('category/<int:pk>/edit/',
+         CategoryUpdateView.as_view(),  
+         name='category-edit'),
     path('category/<int:pk>/delete/',
          DeleteView.as_view(
             model=Category,
             success_url=reverse_lazy('expenses:category-list'),
-            template_name='generic_delete.html'
+            template_name='expenses/generic_delete.html'  
          ),
          name='category-delete'),
 ]

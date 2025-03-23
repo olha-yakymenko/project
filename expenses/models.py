@@ -11,6 +11,9 @@ class Category(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+    def expense_count(self):
+        return self.expense_set.count()
+
 
 class Expense(models.Model):
     class Meta:
@@ -25,3 +28,7 @@ class Expense(models.Model):
 
     def __str__(self):
         return f'{self.date} {self.name} {self.amount}'
+
+    @classmethod
+    def total_spent(cls):
+        return cls.objects.aggregate(total=models.Sum('amount'))['total'] or 0

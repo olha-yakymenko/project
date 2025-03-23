@@ -1,26 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a href="{% url 'expenses:category-create' %}">add</a>
+<h2>Categories</h2>
+
+<a href="{% url 'expenses:category-create' %}">Add Category</a>
 
 <table border="1">
-	<thead>
-		<tr>
-			<th>name</th>
-			<th>actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for obj in object_list %}
-		<tr>
-			<td>
-				{{obj.name}}
-			</td>
-			<td>
-				<a href="{% url 'expenses:category-delete' obj.id %}">delete</a>
-			</td>
-		</tr>
-		{% endfor %}
-	</tbody>
+    <caption>Categories</caption>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Expenses Count</th> 
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category in categories_with_expenses %}
+        <tr>
+            <td>{{ category.name }}</td> 
+            <td>{{ category.expenses_count }}</td> 
+            <td>
+                <a href="{% url 'expenses:category-edit' category.id %}">Edit</a> |
+                <a href="{% url 'expenses:category-delete' category.id %}">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No categories available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+
 {% endblock %}

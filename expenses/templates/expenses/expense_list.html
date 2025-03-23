@@ -1,59 +1,123 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h2>Expenses</h2>
 
-<a href="{% url 'expenses:expense-create' %}">add</a>
+<a href="{% url 'expenses:expense-create' %}">Add Expense</a>
 
 <form method="get" action="">
-  {{form.as_p}}
-  <button type="submit">search</button>
+  {{ form.as_p }}
+  <button type="submit">Search</button>
 </form>
 <br>
-<table border="1">
-	<caption>Expenses</caption>
-	<thead>
-	  <tr>
-		<th>no.</th>
-		<th>category</th>
-		<th>name</th>
-		<th>amount</th>
-		<th>date</th>
-		<th>actions</th>
-	  </tr>
-	</thead>
-	<tbody>
 
-	{% for obj in object_list %}
-	  <tr>
-		<td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
-		<td>{{ obj.category|default:"-" }}</td>
-		<td>{{ obj.name|default:"-" }}</td>
-		<td>{{ obj.amount|floatformat:2 }}</td>
-		<td>{{obj.date}}</td>
-		<td>
-		  <a href="{% url 'expenses:expense-edit' obj.id %}">edit</a>
-		  <a href="{% url 'expenses:expense-delete' obj.id %}">delete</a>
-		</td>
-	  </tr>
-	  {% empty %}
-	  <tr>
-		<td colspan="5">no items</td>
-	  </tr>
-	{% endfor %}
-	</tbody>
+<table border="1">
+  <caption>Expenses List</caption>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Category</th>
+      <th>Name</th>
+      <th>Amount</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for obj in object_list %}
+    <tr>
+      <td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+      <td>{{ obj.category.name|default:"-" }}</td>
+      <td>{{ obj.name|default:"-" }}</td>
+      <td>{{ obj.amount|floatformat:2 }}</td>
+      <td>{{ obj.date }}</td>
+      <td>
+        <a href="{% url 'expenses:expense-edit' obj.id %}">Edit</a> |
+        <a href="{% url 'expenses:expense-delete' obj.id %}">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6">No expenses available.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
 {% include "_pagination.html" %}
 <hr>
+
+<!-- Total Amount -->
+<h3>Total Amount: {{ total_amount|floatformat:2 }}</h3>
+
 <table border="1">
-  <caption>Summary per category</caption>
-  <tr>
-    {% for category, total in summary_per_category.items %}
-	<tr>
-		<td>{{category}}:</td>
-		<td>{{total|floatformat:2}}</td>
-	</tr>
-	{% endfor %}
-  </tr>
+	<h3>Summary per Category</h3>
+	<thead>
+	  <tr>
+		<th>Category</th>
+		<th>Total Amount</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for category in summary_per_category %}
+	  <tr>
+		<td>{{ category.category__name }}</td>
+		<td>{{ category.total|floatformat:2 }}</td>
+	  </tr>
+	  {% empty %}
+	  <tr>
+		<td colspan="2">No summary data available.</td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+  </table>
+  
+  <h3>Summary per Category by Year</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Category</th>
+            <th>Total Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in summary_per_category_year %}
+        <tr>
+            <td>{{ item.year|date:"Y" }}</td>
+            <td>{{ item.category__name }}</td>
+            <td>{{ item.total|floatformat:2 }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">No summary data available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+
+
+<!-- Summary per Month -->
+<h3>Summary per Month</h3>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Month</th>
+      <th>Total Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in summary_per_month %}
+    <tr>
+      <td>{{ item.month|date:"Y-m" }}</td>
+      <td>{{ item.total|floatformat:2 }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="2">No monthly summary available.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}
