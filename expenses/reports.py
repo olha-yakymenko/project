@@ -6,7 +6,7 @@ from django.db.models.functions import Coalesce
 def summary_per_category(queryset):
 
     category_summary = queryset.annotate(
-        category_name=Coalesce('category__name', Value('-'))  # '-' dla pustych kategorii
+        category_name=Coalesce('category__name', Value('-'))  
     ).values('category_name').annotate(
         total_amount=Sum('amount') 
     ).order_by('category_name')  
